@@ -3,6 +3,9 @@ package com.minis.beans.factory.config;
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.BeanFactory;
 
+/**
+ * @author naixixu
+ */
 public interface AutowireCapableBeanFactory  extends BeanFactory{
 	int AUTOWIRE_NO = 0;
 	int AUTOWIRE_BY_NAME = 1;
