@@ -6,6 +6,7 @@ import com.minis.beans.factory.BeanFactory;
 /**
  * @author naixixu
  */
+@SuppressWarnings("unused")
 public interface AutowireCapableBeanFactory  extends BeanFactory{
 	int AUTOWIRE_NO = 0;
 	int AUTOWIRE_BY_NAME = 1;
