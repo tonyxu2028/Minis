@@ -3,6 +3,9 @@ package com.minis.beans.factory.support;
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.FactoryBean;
 
+/**
+ * @author naixixu
+ */
 public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanRegistry {
 
 	protected Class<?> getTypeForFactoryBean(final FactoryBean<?> factoryBean) {
