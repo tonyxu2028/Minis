@@ -1,5 +1,8 @@
 package com.minis.beans.factory.config;
 
+/**
+ * @author naixixu
+ */
 public interface SingletonBeanRegistry {
     void registerSingleton(String beanName, Object singletonObject);
 

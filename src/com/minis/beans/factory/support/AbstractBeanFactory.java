@@ -19,14 +19,15 @@ import com.minis.beans.factory.config.ConfigurableBeanFactory;
 import com.minis.beans.factory.config.ConstructorArgumentValue;
 import com.minis.beans.factory.config.ConstructorArgumentValues;
 
-public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory,BeanDefinitionRegistry{
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements
+		ConfigurableBeanFactory,BeanDefinitionRegistry{
     protected Map<String,BeanDefinition> beanDefinitionMap=new ConcurrentHashMap<>(256);
     protected List<String> beanDefinitionNames=new ArrayList<>();
 	private final Map<String, Object> earlySingletonObjects = new HashMap<String, Object>(16);
 
     public AbstractBeanFactory() {
     }
-    
+
     public void refresh() {
     	for (String beanName : beanDefinitionNames) {
     		try {
@@ -39,7 +40,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
     public Object getBean(String beanName) throws BeansException{
         Object singleton = this.getSingleton(beanName);
-        
+
         if (singleton == null) {
         	singleton = this.earlySingletonObjects.get(beanName);
         	if (singleton == null) {
@@ -47,21 +48,21 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
         		BeanDefinition bd = beanDefinitionMap.get(beanName);
         		if (bd != null) {
 	            	singleton=createBean(bd);
-	            	
+
 					this.registerBean(beanName, singleton);
 					if (singleton instanceof BeanFactoryAware) {
-						((BeanFactoryAware) singleton).setBeanFactory(this);						
+						((BeanFactoryAware) singleton).setBeanFactory(this);
 					}
-					
+
 					//beanpostprocessor
 					//step 1 : postProcessBeforeInitialization
-					singleton = applyBeanPostProcessorsBeforeInitialization(singleton, beanName);				
-System.out.println(" class proxy after bean post processor " + singleton.getClass());	
+					singleton = applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
+System.out.println(" class proxy after bean post processor " + singleton.getClass());
 					//step 2 : init-method
 					if (bd.getInitMethodName() != null && !bd.getInitMethodName().equals("")) {
 						invokeInitMethod(bd, singleton);
 					}
-	
+
 					//step 3 : postProcessAfterInitialization
 					applyBeanPostProcessorsAfterInitialization(singleton, beanName);
 
@@ -72,11 +73,11 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
         			return null;
         		}
         	}
-				
+
         }
         else {
     		System.out.println("bean exist -------------- " + beanName + "----------------"+singleton);
-        	
+
         }
 //        if (singleton == null) {
 //        	throw new BeansException("bean is null.");
@@ -89,12 +90,12 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
         }
         else {
     		System.out.println("normal bean -------------- " + beanName + "----------------"+singleton);
-        	
+
         }
-        
+
         return singleton;
     }
-    
+
     private void invokeInitMethod(BeanDefinition bd, Object obj) {
     	Class<?> clz = obj.getClass();
 		Method method = null;
@@ -113,9 +114,9 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
-		}    	
+		}
     }
-    
+
 	@Override
 	public boolean containsBean(String name) {
 		return containsSingleton(name);
@@ -123,7 +124,7 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
 
 	public void registerBean(String beanName, Object obj) {
 		this.registerSingleton(beanName, obj);
-		
+
 	}
 
 	@Override
@@ -145,7 +146,7 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
 		this.beanDefinitionMap.remove(name);
 		this.beanDefinitionNames.remove(name);
 		this.removeSingleton(name);
-		
+
 	}
 
 	@Override
@@ -172,21 +173,21 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
 	public Class<?> getType(String name) {
 		return this.beanDefinitionMap.get(name).getClass();
 	}
-	
+
 	private Object createBean(BeanDefinition bd) {
 		Class<?> clz = null;
 		Object obj = doCreateBean(bd);
-		
+
 		this.earlySingletonObjects.put(bd.getId(), obj);
-		
+
 		try {
 			clz = Class.forName(bd.getClassName());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		populateBean(bd, clz, obj);
-		
+
 		return obj;
 	}
 
@@ -197,13 +198,13 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
 
 		try {
     		clz = Class.forName(bd.getClassName());
-    		
+
     		//handle constructor
     		ConstructorArgumentValues argumentValues = bd.getConstructorArgumentValues();
     		if (argumentValues != null) {
     		if (!argumentValues.isEmpty()) {
         		Class<?>[] paramTypes = new Class<?>[argumentValues.getArgumentCount()];
-        		Object[] paramValues =   new Object[argumentValues.getArgumentCount()];  
+        		Object[] paramValues =   new Object[argumentValues.getArgumentCount()];
     			for (int i=0; i<argumentValues.getArgumentCount(); i++) {
     				ConstructorArgumentValue argumentValue = argumentValues.getIndexedArgumentValue(i);
     				if ("String".equals(argumentValue.getType()) || "java.lang.String".equals(argumentValue.getType())) {
@@ -220,7 +221,7 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
     				}
     				else {
     					paramTypes[i] = String.class;
-        				paramValues[i] = argumentValue.getValue();    					
+        				paramValues[i] = argumentValue.getValue();
     				}
     			}
 				try {
@@ -234,7 +235,7 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
-				}  
+				}
     		}
     		else {
     			obj = clz.newInstance();
@@ -251,17 +252,17 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println(bd.getId() + " bean created. " + bd.getClassName() + " : " + obj.toString());
-		
+
 		return obj;
 
 	}
-    
+
 	private void populateBean(BeanDefinition bd, Class<?> clz, Object obj) {
 		handleProperties(bd, clz, obj);
 	}
-	
+
 	private void handleProperties(BeanDefinition bd, Class<?> clz, Object obj) {
 		//handle properties
 		System.out.println("handle properties for bean : " + bd.getId());
@@ -274,8 +275,8 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
 				String pType = propertyValue.getType();
     			Object pValue = propertyValue.getValue();
     			boolean isRef = propertyValue.getIsRef();
-    			Class<?>[] paramTypes = new Class<?>[1];    			
-				Object[] paramValues =   new Object[1];  
+    			Class<?>[] paramTypes = new Class<?>[1];
+				Object[] paramValues =   new Object[1];
     			if (!isRef) {
 					if ("String".equals(pType) || "java.lang.String".equals(pType)) {
 						paramTypes[0] = String.class;
@@ -293,9 +294,9 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
 						paramTypes[0] = String.class;
 						paramValues[0] = pValue;
 					}
-					
-					
-    				
+
+
+
     			}
     			else { //is ref, create the dependent beans
     				try {
@@ -305,14 +306,14 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
 					}
     				try {
 						paramValues[0] = getBean((String)pValue);
-						
+
 					} catch (BeansException e) {
 						e.printStackTrace();
 					}
     			}
 
     			String methodName = "set" + pName.substring(0,1).toUpperCase() + pName.substring(1);
-				    			
+
     			Method method = null;
 				try {
 					method = clz.getMethod(methodName, paramTypes);
@@ -330,8 +331,8 @@ System.out.println(" class proxy after bean post processor " + singleton.getClas
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
 				}
-    			
-    			
+
+
 			}
 		}
 		}

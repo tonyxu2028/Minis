@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.minis.beans.factory.config.SingletonBeanRegistry;
 
 /**
+ * Spring容器中单例bean的注册器默认实现
  * @author Snow Wolf
  */
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
@@ -45,7 +46,7 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
     @Override
     public String[] getSingletonNames() {
-       return transitionObjectArrayToStringArray(this.singletonObjects.keySet().toArray());
+        return transitionObjectArrayToStringArray(this.singletonObjects.keySet().toArray());
     }
 
     public void removeSingleton(String beanName) {
@@ -56,7 +57,9 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
     }
 
     public void registerDependentBean(String beanName, String dependentBeanName) {
+
         Set<String> dependentBeans = this.dependentBeanMap.get(beanName);
+
         if (dependentBeans != null && dependentBeans.contains(dependentBeanName)) {
             return;
         }
@@ -66,16 +69,13 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
             dependentBeans = this.dependentBeanMap.computeIfAbsent(beanName, k -> new LinkedHashSet<>(8));
             dependentBeans.add(dependentBeanName);
         }
+
         synchronized (this.dependenciesForBeanMap) {
-            Set<String> dependenciesForBean = this.dependenciesForBeanMap.computeIfAbsent(dependentBeanName, k -> new LinkedHashSet<>(8));
+            Set<String> dependenciesForBean = this.dependenciesForBeanMap.computeIfAbsent(
+                    dependentBeanName, k -> new LinkedHashSet<>(8));
             dependenciesForBean.add(beanName);
         }
 
-    }
-
-    @SuppressWarnings("unused")
-    public boolean hasDependentBean(String beanName) {
-        return this.dependentBeanMap.containsKey(beanName);
     }
 
     public String[] getDependentBeans(String beanName) {
@@ -100,6 +100,11 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
             stringArray[i] = (String) objectArray[i];
         }
         return stringArray;
+    }
+
+    @SuppressWarnings("unused")
+    public boolean hasDependentBean(String beanName) {
+        return this.dependentBeanMap.containsKey(beanName);
     }
 
 }

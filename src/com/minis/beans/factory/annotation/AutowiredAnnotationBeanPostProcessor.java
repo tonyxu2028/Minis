@@ -9,11 +9,11 @@ import com.minis.beans.factory.config.BeanPostProcessor;
 
 public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor,BeanFactoryAware {
 	private BeanFactory beanFactory;
-	
+
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		Object result = bean;
-		
+
 		Class<?> clazz = bean.getClass();
 		Field[] fields = clazz.getDeclaredFields();
 		if(fields!=null){
@@ -36,7 +36,7 @@ public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor,B
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -50,6 +50,7 @@ public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor,B
 		return beanFactory;
 	}
 
+	@Override
 	public void setBeanFactory(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
