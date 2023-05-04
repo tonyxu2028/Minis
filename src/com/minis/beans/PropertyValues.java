@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * @author naixixu
+ */
 public class PropertyValues{
 	private final List<PropertyValue> propertyValueList;
 

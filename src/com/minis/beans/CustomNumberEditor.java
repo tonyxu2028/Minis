@@ -5,24 +5,27 @@ import java.text.NumberFormat;
 import com.minis.util.NumberUtils;
 import com.minis.util.StringUtils;
 
+/**
+ * @author naixixu
+ */
 public class CustomNumberEditor implements PropertyEditor {
 	private Class<? extends Number> numberClass;
 	private NumberFormat numberFormat;
 	private boolean allowEmpty;
 	private Object value;
-	
+
 	public CustomNumberEditor(Class<? extends Number> numberClass,
 			  boolean allowEmpty) throws IllegalArgumentException {
 		this(numberClass, null, allowEmpty);
 	}
-	
+
 	public CustomNumberEditor(Class<? extends Number> numberClass,
 			 NumberFormat numberFormat, boolean allowEmpty) throws IllegalArgumentException {
 		this.numberClass = numberClass;
 		this.numberFormat = numberFormat;
 		this.allowEmpty = allowEmpty;
 	}
-	
+
 	@Override
 	public void setAsText(String text) {
 		if (this.allowEmpty && !StringUtils.hasText(text)) {

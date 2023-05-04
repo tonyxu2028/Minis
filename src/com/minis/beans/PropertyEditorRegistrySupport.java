@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * @author naixixu
+ */
 public class PropertyEditorRegistrySupport {
 	private Map<Class<?>, PropertyEditor> defaultEditors;
 	private Map<Class<?>, PropertyEditor> customEditors;
@@ -13,7 +16,7 @@ public class PropertyEditorRegistrySupport {
 	public PropertyEditorRegistrySupport() {
 		registerDefaultEditors();
 	}
-	
+
 	protected void registerDefaultEditors() {
 		createDefaultEditors();
 	}
